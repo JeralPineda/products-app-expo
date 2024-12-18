@@ -1,6 +1,7 @@
 import { create } from "zustand";
 
 import { User } from "@/core/auth/interface/user";
+import { authCheckStatus, authLogin } from "@/core/auth/actions/auth-actions";
 
 export type AuthStatus = "authenticated" | "unauthenticated" | "checking";
 
@@ -12,20 +13,50 @@ export interface AuthState {
   login: (email: string, password: string) => Promise<boolean>;
   checkStatus: () => Promise<void>;
   logout: () => Promise<void>;
+
+  changeStatus: (token?: string, user?: User) => boolean;
 }
 
-export const useauthStore = create<AuthState>()((set) => ({
+export const useauthStore = create<AuthState>()((set, get) => ({
   //Properties
   status: "checking",
   token: undefined,
   user: undefined,
 
   //Actions
-  login: async (email: string, password: string) => {
+  changeStatus: (token?: string, user?: User) => {
+    if (!token || !user) {
+      set({ status: "unauthenticated", token: undefined, user: undefined });
+      // TODO: execute logout
+      return false;
+    }
+
+    set({
+      status: "authenticated",
+      token,
+      user,
+    });
+
+    // TODO: save token on secure storage
+
     return true;
   },
 
-  checkStatus: async () => {},
+  login: async (email: string, password: string) => {
+    const resp = await authLogin(email, password);
 
-  logout: async () => {},
+    return get().changeStatus(resp?.token, resp?.user);
+  },
+
+  checkStatus: async () => {
+    const resp = await authCheckStatus();
+
+    get().changeStatus(resp?.token, resp?.user);
+  },
+
+  logout: async () => {
+    // TODO: remove token from secure storage
+
+    set({ status: "unauthenticated", token: undefined, user: undefined });
+  },
 }));

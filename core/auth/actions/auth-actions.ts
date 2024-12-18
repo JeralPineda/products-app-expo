@@ -28,7 +28,8 @@ export const authLogin = async (email: string, password: string) => {
     return returnUserToken(data);
   } catch (error) {
     console.log("🚀 auth-actions.ts -> #30 ~", error);
-    throw new Error("Error on login");
+    // throw new Error("Error on login");
+    return null;
   }
 };
 
@@ -60,6 +61,7 @@ export const authRegister = async (
     return returnUserToken(data);
   } catch (error) {
     console.log("🚀 auth-actions.ts -> #62 ~", error);
-    throw new Error("Error on register");
+    // throw new Error("Error on register");
+    return null;
   }
 };
