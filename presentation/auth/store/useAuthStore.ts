@@ -17,7 +17,7 @@ export interface AuthState {
   changeStatus: (token?: string, user?: User) => boolean;
 }
 
-export const useauthStore = create<AuthState>()((set, get) => ({
+export const useAuthStore = create<AuthState>()((set, get) => ({
   //Properties
   status: "checking",
   token: undefined,
