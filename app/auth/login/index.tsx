@@ -1,10 +1,8 @@
 import {
-  View,
-  Text,
   KeyboardAvoidingView,
   ScrollView,
   useWindowDimensions,
-  TextInput,
+  View,
 } from "react-native";
 
 import { ThemedText } from "@/presentation/theme/components/ThemedText";
