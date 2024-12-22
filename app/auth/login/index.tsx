@@ -1,15 +1,20 @@
 import {
   KeyboardAvoidingView,
   ScrollView,
+  Text,
   useWindowDimensions,
   View,
 } from "react-native";
 
 import { ThemedText } from "@/presentation/theme/components/ThemedText";
 import ThemedTextInput from "@/presentation/theme/components/ThemedTextInput";
+import ThemedButton from "@/presentation/theme/components/ThemedButton";
+import ThemedLink from "@/presentation/theme/components/ThemedLink";
+import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 
 export default function Login() {
   const { height } = useWindowDimensions();
+  const textColor = useThemeColor({}, "text");
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -48,6 +53,39 @@ export default function Login() {
             autoCapitalize="none"
             icon="lock-closed-outline"
           />
+        </View>
+
+        {/* Spacer */}
+        <View style={{ marginTop: 10 }} />
+
+        {/* Botón */}
+        <ThemedButton
+          icon="arrow-forward-outline"
+          onPress={() => console.log("🚀 index.tsx -> #55 ~", "login")}
+        >
+          Ingresar
+        </ThemedButton>
+
+        {/* Spacer */}
+        <View style={{ marginTop: 50 }} />
+
+        {/* Enlace */}
+        <View
+          style={{
+            flexDirection: "row",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <Text style={{ color: textColor }}>¿No tienes cuenta?</Text>
+          <ThemedLink
+            href="/auth/register"
+            style={{
+              marginHorizontal: 5,
+            }}
+          >
+            Crea cuenta
+          </ThemedLink>
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
