@@ -15,12 +15,14 @@ import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 export default function Login() {
   const { height } = useWindowDimensions();
   const textColor = useThemeColor({}, "text");
+  const backgroundColor = useThemeColor({}, "background");
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
       <ScrollView
         style={{
           paddingHorizontal: 40,
+          backgroundColor: backgroundColor,
         }}
       >
         <View

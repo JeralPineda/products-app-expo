@@ -1,3 +1,4 @@
+import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 import {
   DarkTheme,
   DefaultTheme,
@@ -17,6 +18,8 @@ SplashScreen.preventAutoHideAsync();
 
 export default function RootLayout() {
   const colorScheme = useColorScheme();
+  const backgroundColor = useThemeColor({}, "background");
+
   const [loaded] = useFonts({
     KanitRegular: require("../assets/fonts/Kanit-Regular.ttf"),
     KanitBold: require("../assets/fonts/Kanit-Bold.ttf"),
@@ -34,7 +37,12 @@ export default function RootLayout() {
   }
 
   return (
-    <GestureHandlerRootView>
+    <GestureHandlerRootView
+      style={{
+        flex: 1,
+        backgroundColor: backgroundColor,
+      }}
+    >
       <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
         <Stack
           screenOptions={{
