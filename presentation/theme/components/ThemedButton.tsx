@@ -1,5 +1,11 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Pressable, PressableProps, StyleSheet, Text } from "react-native";
+import {
+  ActivityIndicator,
+  Pressable,
+  PressableProps,
+  StyleSheet,
+  Text,
+} from "react-native";
 
 import { useThemeColor } from "../hooks/useThemeColor";
 
@@ -17,13 +23,18 @@ export default function ThemedButton({ children, icon, ...rest }: Props) {
       style={({ pressed }) => [
         {
           backgroundColor: pressed ? primaryColor + "90" : primaryColor,
+          opacity: rest.disabled ? 0.8 : 1,
         },
         styles.button,
       ]}
     >
-      <Text style={styles.text}>{children}</Text>
+      {rest.disabled ? (
+        <ActivityIndicator />
+      ) : (
+        <Text style={styles.text}>{children}</Text>
+      )}
 
-      {icon && (
+      {icon && !rest.disabled && (
         <Ionicons
           name={icon}
           size={24}
