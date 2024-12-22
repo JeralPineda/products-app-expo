@@ -1,4 +1,3 @@
-import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 import {
   DarkTheme,
   DefaultTheme,
@@ -12,6 +11,8 @@ import { useEffect } from "react";
 import { useColorScheme } from "react-native";
 import { GestureHandlerRootView } from "react-native-gesture-handler";
 import "react-native-reanimated";
+
+import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
