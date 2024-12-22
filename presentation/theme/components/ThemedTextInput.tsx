@@ -1,35 +1,48 @@
 import { useRef, useState } from "react";
-import { StyleSheet, TextInput, TextInputProps, View } from "react-native";
+import {
+  Platform,
+  StyleSheet,
+  TextInput,
+  TextInputProps,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
 import { useThemeColor } from "../hooks/useThemeColor";
 
 interface Props extends TextInputProps {
   icon?: keyof typeof Ionicons.glyphMap;
+  type?: "text" | "password";
 }
 
-export default function ThemedTextInput({ icon, ...rest }: Props) {
+const isAndroid = Platform.OS === "android";
+
+export default function ThemedTextInput({
+  type = "text",
+  icon,
+  secureTextEntry,
+  ...rest
+}: Props) {
   const primaryColor = useThemeColor({}, "primary");
   const textColor = useThemeColor({}, "text");
 
+  const [showPassword, setShowPassword] = useState(false);
   const [isActive, setIsActive] = useState(false);
+
   const inputRef = useRef<TextInput>(null);
 
   return (
     <View
       style={{
-        ...styles.border,
+        ...styles.container,
         borderColor: isActive ? primaryColor : "#cccccc",
       }}
       onTouchStart={() => inputRef.current?.focus()}
     >
       {icon && (
-        <Ionicons
-          name={icon}
-          size={24}
-          color={textColor}
-          style={{ marginRight: 10 }}
-        />
+        <View>
+          <Ionicons name={icon} size={24} color={textColor} />
+        </View>
       )}
 
       <TextInput
@@ -37,27 +50,46 @@ export default function ThemedTextInput({ icon, ...rest }: Props) {
         placeholderTextColor="#5c5c5c"
         onFocus={() => setIsActive(true)}
         onBlur={() => setIsActive(false)}
+        secureTextEntry={type === "password" ? showPassword : false}
         {...rest}
         style={{
           ...styles.input,
           color: textColor,
         }}
       />
+
+      {type === "password" && (
+        <View style={styles.showPassword}>
+          <Ionicons
+            name={showPassword ? "eye" : "eye-off"}
+            size={24}
+            color={textColor}
+            onPress={() => setShowPassword(!showPassword)}
+          />
+        </View>
+      )}
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  border: {
-    borderWidth: 1,
-    borderRadius: 5,
-    padding: 10,
-    marginBottom: 10,
+  container: {
+    flex: 1,
     flexDirection: "row",
     alignItems: "center",
+    justifyContent: "space-between",
+    marginBottom: 10,
+    borderWidth: 1,
+    borderRadius: 5,
+    gap: 10,
+    padding: isAndroid ? 6 : 12,
   },
   input: {
     flex: 1,
-    marginRight: 10,
+  },
+  showPassword: {
+    justifyContent: "center",
+    alignItems: "center",
+    borderBottomEndRadius: 10,
   },
 });
