@@ -44,10 +44,6 @@ export default function Login() {
     }
 
     setIsPosting(true);
-    console.log(
-      "🚀 index.tsx -> #47 ~",
-      JSON.stringify({ email, password }, null, 2),
-    );
 
     const wasSuccessful = await login(email, password);
 
