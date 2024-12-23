@@ -26,7 +26,7 @@ export default function ThemedTextInput({
   const primaryColor = useThemeColor({}, "primary");
   const textColor = useThemeColor({}, "text");
 
-  const [showPassword, setShowPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(secureTextEntry);
   const [isActive, setIsActive] = useState(false);
 
   const inputRef = useRef<TextInput>(null);
@@ -61,7 +61,7 @@ export default function ThemedTextInput({
       {type === "password" && (
         <View style={styles.showPassword}>
           <Ionicons
-            name={showPassword ? "eye" : "eye-off"}
+            name={showPassword ? "eye-off-outline" : "eye-outline"}
             size={24}
             color={textColor}
             onPress={() => setShowPassword(!showPassword)}
