@@ -16,6 +16,8 @@ const productsApi = axios.create({
   baseURL: API_URL,
 });
 
+// console.log("🚀 productsApi.ts -> #1 ~", { [Platform.OS]: API_URL });
+
 productsApi.interceptors.request.use(async (config) => {
   // Verificar si tenemos un token en el secure storage
   const token = await SecureStorageAdapter.getItem("token");

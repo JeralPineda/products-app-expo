@@ -1,21 +1,63 @@
+import { useState } from "react";
 import {
+  Alert,
   KeyboardAvoidingView,
   ScrollView,
   Text,
   useWindowDimensions,
   View,
 } from "react-native";
+import { router } from "expo-router";
 
 import { ThemedText } from "@/presentation/theme/components/ThemedText";
 import ThemedTextInput from "@/presentation/theme/components/ThemedTextInput";
 import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import ThemedLink from "@/presentation/theme/components/ThemedLink";
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
+import { useAuthStore } from "@/presentation/auth/store/useAuthStore";
+
+interface RegisterFormData {
+  email: string;
+  password: string;
+  fullName: string;
+}
+
+const RegisterData: RegisterFormData = {
+  email: "",
+  password: "",
+  fullName: "",
+};
 
 export default function Register() {
+  const { register } = useAuthStore();
+
   const { height } = useWindowDimensions();
   const textColor = useThemeColor({}, "text");
   const backgroundColor = useThemeColor({}, "background");
+
+  const [isPosting, setIsPosting] = useState(false);
+  const [formData, setFormData] = useState(RegisterData);
+
+  const onRegister = async () => {
+    const { email, password, fullName } = formData;
+
+    if (!email || !password || !fullName) {
+      return;
+    }
+
+    setIsPosting(true);
+
+    const wasSuccessful = await register(email, password, fullName);
+
+    setIsPosting(false);
+
+    if (wasSuccessful) {
+      router.replace("/");
+      return;
+    }
+
+    Alert.alert("Error", "Credenciales incorrectas");
+  };
 
   return (
     <KeyboardAvoidingView behavior="padding" style={{ flex: 1 }}>
@@ -46,6 +88,13 @@ export default function Register() {
             placeholder="Nombre completo"
             autoCapitalize="words"
             icon="person-outline"
+            value={formData.fullName}
+            onChangeText={(value) =>
+              setFormData({
+                ...formData,
+                fullName: value,
+              })
+            }
           />
 
           <ThemedTextInput
@@ -53,6 +102,13 @@ export default function Register() {
             keyboardType="email-address"
             autoCapitalize="none"
             icon="mail-outline"
+            value={formData.email}
+            onChangeText={(value) =>
+              setFormData({
+                ...formData,
+                email: value,
+              })
+            }
           />
 
           <ThemedTextInput
@@ -60,6 +116,13 @@ export default function Register() {
             secureTextEntry
             autoCapitalize="none"
             icon="lock-closed-outline"
+            value={formData.password}
+            onChangeText={(value) =>
+              setFormData({
+                ...formData,
+                password: value,
+              })
+            }
           />
         </View>
 
@@ -69,7 +132,8 @@ export default function Register() {
         {/* Botón */}
         <ThemedButton
           icon="arrow-forward-outline"
-          onPress={() => console.log("🚀 index.tsx -> #55 ~", "login")}
+          onPress={onRegister}
+          disabled={isPosting}
         >
           Crear cuenta
         </ThemedButton>

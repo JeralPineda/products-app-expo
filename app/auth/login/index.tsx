@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Alert,
   KeyboardAvoidingView,
@@ -6,15 +7,14 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import { router } from "expo-router";
 
 import { ThemedText } from "@/presentation/theme/components/ThemedText";
 import ThemedTextInput from "@/presentation/theme/components/ThemedTextInput";
 import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import ThemedLink from "@/presentation/theme/components/ThemedLink";
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
-import { useState } from "react";
 import { useAuthStore } from "@/presentation/auth/store/useAuthStore";
-import { router } from "expo-router";
 
 interface LoginFormData {
   email: string;
