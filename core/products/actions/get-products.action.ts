@@ -15,7 +15,9 @@ export const getProducts = async (
 
     return data.map((product) => ({
       ...product,
-      images: product.images.map((image) => `${API_URL}${image}`),
+      images: product.images.map(
+        (image) => `${API_URL}/files/product/${image}`,
+      ),
     }));
   } catch (error) {
     throw new Error("Unable to load products");
