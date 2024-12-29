@@ -13,6 +13,7 @@ import ThemedTextInput from "@/presentation/theme/components/ThemedTextInput";
 import { ThemedView } from "@/presentation/theme/components/ThemedView";
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 import { useProduct } from "@/presentation/products/hooks/usePrdouct";
+import ProductImages from "@/presentation/products/components/product-images";
 
 export default function Product() {
   const primaryColor = useThemeColor({}, "primary");
@@ -57,7 +58,7 @@ export default function Product() {
       behavior={Platform.OS === "ios" ? "padding" : undefined}
     >
       <ScrollView>
-        {/* TODO: Product images */}
+        <ProductImages images={product.images} />
 
         <ThemedView style={{ marginHorizontal: 10, marginTop: 20 }}>
           <ThemedTextInput placeholder="Titulo" style={{ marginVertical: 5 }} />
