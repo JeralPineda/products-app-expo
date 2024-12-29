@@ -21,6 +21,7 @@ export default function ThemedTextInput({
   type = "text",
   icon,
   secureTextEntry,
+  style,
   ...rest
 }: Props) {
   const primaryColor = useThemeColor({}, "primary");
@@ -52,10 +53,13 @@ export default function ThemedTextInput({
         onBlur={() => setIsActive(false)}
         secureTextEntry={type === "password" ? showPassword : false}
         {...rest}
-        style={{
-          ...styles.input,
-          color: textColor,
-        }}
+        style={[
+          {
+            ...styles.input,
+            color: textColor,
+          },
+          style,
+        ]}
       />
 
       {type === "password" && (
