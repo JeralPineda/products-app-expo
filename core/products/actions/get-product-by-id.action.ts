@@ -1,7 +1,7 @@
 import { API_URL, productsApi } from "@/core/api/productsApi";
 import { type Product } from "../interface/product.interface";
 
-export const getProducts = async (id: string): Promise<Product> => {
+export const getProductById = async (id: string): Promise<Product> => {
   try {
     const { data } = await productsApi.get<Product>(`/products/${id}`);
 

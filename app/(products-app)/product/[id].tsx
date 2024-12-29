@@ -1,25 +1,56 @@
 import { Ionicons } from "@expo/vector-icons";
-import { useNavigation } from "expo-router";
+import { Redirect, useLocalSearchParams, useNavigation } from "expo-router";
 import { useEffect } from "react";
-import { KeyboardAvoidingView, Platform, ScrollView } from "react-native";
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  ScrollView,
+  View,
+} from "react-native";
 
 import ThemedTextInput from "@/presentation/theme/components/ThemedTextInput";
 import { ThemedView } from "@/presentation/theme/components/ThemedView";
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
+import { useProduct } from "@/presentation/products/hooks/usePrdouct";
 
 export default function Product() {
-  const navigation = useNavigation();
   const primaryColor = useThemeColor({}, "primary");
 
-  useEffect(() => {
-    // TODO: Colocar el nombre del producto en el header
+  const { id } = useLocalSearchParams();
+  const navigation = useNavigation();
 
+  const { productQuery } = useProduct(`${id}`);
+
+  useEffect(() => {
     navigation.setOptions({
       headerRight: () => (
         <Ionicons name="camera-outline" size={26} color={primaryColor} />
       ),
     });
   }, []);
+
+  useEffect(() => {
+    if (productQuery.data) {
+      navigation.setOptions({
+        title: productQuery.data.title,
+      });
+    }
+  }, [productQuery.data]);
+
+  if (productQuery.isLoading) {
+    return (
+      <View style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
+        <ActivityIndicator size={30} />
+      </View>
+    );
+  }
+
+  if (!productQuery.data) {
+    return <Redirect href="/(products-app)/(home)" />;
+  }
+
+  const product = productQuery.data!;
 
   return (
     <KeyboardAvoidingView
