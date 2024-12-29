@@ -15,6 +15,7 @@ import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 import { useProduct } from "@/presentation/products/hooks/usePrdouct";
 import ProductImages from "@/presentation/products/components/product-images";
 import ThemedButtonGroup from "@/presentation/theme/components/ThemedButtonGroup";
+import ThemedButton from "@/presentation/theme/components/ThemedButton";
 
 export default function Product() {
   const primaryColor = useThemeColor({}, "primary");
@@ -101,7 +102,28 @@ export default function Product() {
             selectedOptions={product.sizes}
             onSelected={(options) => console.log({ options })}
           />
+
+          <ThemedButtonGroup
+            options={["kid", "men", "women", "unisex"]}
+            selectedOptions={[product.gender]}
+            onSelected={(options) => console.log({ options })}
+          />
         </ThemedView>
+
+        <View
+          style={{
+            marginHorizontal: 10,
+            marginBottom: 50,
+            marginTop: 20,
+          }}
+        >
+          <ThemedButton
+            icon="save-outline"
+            onPress={() => console.log("guardar")}
+          >
+            Guardar
+          </ThemedButton>
+        </View>
       </ScrollView>
     </KeyboardAvoidingView>
   );

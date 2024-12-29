@@ -40,7 +40,7 @@ export default function ThemedButton({ children, icon, ...rest }: Props) {
           size={24}
           color="white"
           style={{
-            marginRight: 5,
+            marginHorizontal: 5,
           }}
         />
       )}
