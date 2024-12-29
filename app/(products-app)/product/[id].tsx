@@ -14,6 +14,7 @@ import { ThemedView } from "@/presentation/theme/components/ThemedView";
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 import { useProduct } from "@/presentation/products/hooks/usePrdouct";
 import ProductImages from "@/presentation/products/components/product-images";
+import ThemedButtonGroup from "@/presentation/theme/components/ThemedButtonGroup";
 
 export default function Product() {
   const primaryColor = useThemeColor({}, "primary");
@@ -91,6 +92,14 @@ export default function Product() {
             placeholder="Inventario"
             keyboardType="numeric"
             style={{ flex: 1 }}
+          />
+        </ThemedView>
+
+        <ThemedView style={{ marginHorizontal: 10 }}>
+          <ThemedButtonGroup
+            options={["XS", "S", "M", "L", "XL", "XXL", "XXXL"]}
+            selectedOptions={product.sizes}
+            onSelected={(options) => console.log({ options })}
           />
         </ThemedView>
       </ScrollView>
