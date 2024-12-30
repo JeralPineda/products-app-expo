@@ -3,6 +3,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 
 import { getProductById } from "@/core/products/actions/get-product-by-id.action";
 import { Product } from "@/core/products/interface/product.interface";
+import { updateCreateProduct } from "@/core/products/actions/create-update-product.action";
 
 export function useProduct(productId: string) {
   const productQuery = useQuery({
@@ -12,12 +13,7 @@ export function useProduct(productId: string) {
   });
 
   const productMutation = useMutation({
-    mutationFn: async (data: Product) => {
-      // TODO: disparar la acción de crear un producto
-      console.log("🚀 usePrdouct.ts -> #15 ~", JSON.stringify(data, null, 2));
-
-      return data;
-    },
+    mutationFn: async (data: Product) => updateCreateProduct(data),
     onSuccess: (data: Product) => {
       // TODO: invalidar el cache del producto
 
