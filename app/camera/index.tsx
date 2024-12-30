@@ -1,11 +1,21 @@
 import { ThemedText } from "@/presentation/theme/components/ThemedText";
+import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
-import { useState } from "react";
-import { Button, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { useRef, useState } from "react";
+import {
+  Button,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  useWindowDimensions,
+  View,
+} from "react-native";
 
-export default function App() {
+export default function Camera() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [permission, requestPermission] = useCameraPermissions();
+
+  const cameraRef = useRef<CameraView>(null);
 
   if (!permission) {
     // Camera permissions are still loading.
@@ -34,22 +44,57 @@ export default function App() {
     );
   }
 
+  const onShutterButtonPress = async () => {
+    if (!cameraRef.current) return;
+
+    const picture = await cameraRef.current.takePictureAsync({
+      quality: 0.7,
+    });
+
+    console.log("🚀 index.tsx -> #55 ~", picture);
+
+    if (!picture?.uri) return;
+
+    // TODO: Guardar imagen en el dispositivo
+  };
+
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
 
   return (
     <View style={styles.container}>
-      <CameraView style={styles.camera} facing={facing}>
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}>
-            <Text style={styles.text}>Flip Camera</Text>
-          </TouchableOpacity>
-        </View>
+      <CameraView style={styles.camera} facing={facing} ref={cameraRef}>
+        <ShutterButton onPress={onShutterButtonPress} />
+
+        {/* <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}> */}
+        {/*   <Text style={styles.text}>Flip Camera</Text> */}
+        {/* </TouchableOpacity> */}
       </CameraView>
     </View>
   );
 }
+
+//Custom components
+const ShutterButton = ({ onPress }: { onPress: () => void }) => {
+  const dimensions = useWindowDimensions();
+  const primaryColor = useThemeColor({}, "primary");
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.shutterButton,
+        {
+          position: "absolute",
+          bottom: 30,
+          left: dimensions.width / 2 - 32,
+          borderColor: primaryColor,
+        },
+      ]}
+    ></TouchableOpacity>
+  );
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -78,5 +123,52 @@ const styles = StyleSheet.create({
     fontSize: 24,
     fontWeight: "bold",
     color: "white",
+  },
+
+  shutterButton: {
+    width: 64,
+    height: 64,
+    borderRadius: 32,
+    backgroundColor: "white",
+    // borderColor: "red",
+    borderWidth: 4,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  flipCameraButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 32,
+    backgroundColor: "#17202A",
+    position: "absolute",
+    bottom: 40,
+    right: 32,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  galleryButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 32,
+    backgroundColor: "#17202A",
+    position: "absolute",
+    bottom: 40,
+    left: 32,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+
+  returnCancelButton: {
+    width: 50,
+    height: 50,
+    borderRadius: 32,
+    backgroundColor: "#17202A",
+    position: "absolute",
+    top: 40,
+    left: 32,
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
