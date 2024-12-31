@@ -14,13 +14,33 @@ export const updateCreateProduct = (
   return createProduct(product);
 };
 
+const prepareImages = async (images: string[]): Promise<string[]> => {
+  const fileImages = images.filter((image) => image.startsWith("file"));
+  const currentImages = images.filter((image) => !image.startsWith("file"));
+
+  if (fileImages.length > 0) {
+    const uploadPromises = fileImages.map(updloadImage);
+    const uploadedImages = await Promise.all(uploadPromises);
+
+    currentImages.push(...uploadedImages);
+  }
+
+  return currentImages.map((img) => img.split("/").pop()!);
+};
+
+const updloadImage = async (image: string): Promise<string> => {
+  return image;
+};
+
 async function updateProduct(product: Partial<Product>): Promise<Product> {
   const { id, images = [], user, ...rest } = product;
 
   try {
+    const checkImages = await prepareImages(images);
+
     const { data } = await productsApi.patch<Product>(`/products/${id}`, {
       ...rest,
-      //TODO: images
+      images: checkImages,
     });
 
     return data;
@@ -33,9 +53,11 @@ async function createProduct(product: Partial<Product>): Promise<Product> {
   const { id, images = [], user, ...rest } = product;
 
   try {
+    const checkImages = await prepareImages(images);
+
     const { data } = await productsApi.post<Product>(`/products`, {
       ...rest,
-      //TODO: images
+      images: checkImages,
     });
 
     return data;

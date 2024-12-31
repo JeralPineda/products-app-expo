@@ -71,7 +71,15 @@ export default function Product() {
   const product = productQuery.data!;
 
   return (
-    <Formik initialValues={product} onSubmit={productMutation.mutate}>
+    <Formik
+      initialValues={product}
+      onSubmit={(productLike) =>
+        productMutation.mutate({
+          ...productLike,
+          images: [...product.images, ...selectedImages],
+        })
+      }
+    >
       {({ values, handleChange, handleSubmit, setFieldValue }) => (
         <KeyboardAvoidingView
           behavior={Platform.OS === "ios" ? "padding" : undefined}
