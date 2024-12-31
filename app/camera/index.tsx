@@ -1,10 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
-import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
+import { CameraType, CameraView, useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
-
 import {
-  Button,
+  Alert,
   Image,
   StyleSheet,
   Text,
@@ -12,6 +11,7 @@ import {
   useWindowDimensions,
   View,
 } from "react-native";
+import * as MediaLibrary from "expo-media-library";
 
 import { ThemedText } from "@/presentation/theme/components/ThemedText";
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
@@ -19,16 +19,46 @@ import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 export default function Camera() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [selectedImage, setSelectedImage] = useState<string>();
-  const [permission, requestPermission] = useCameraPermissions();
+
+  const [cameraPermission, requestCameraPermission] = useCameraPermissions();
+  const [mediaPermissionResponse, requestMediaPermission] =
+    MediaLibrary.usePermissions();
 
   const cameraRef = useRef<CameraView>(null);
 
-  if (!permission) {
+  const onRequestPermissions = async () => {
+    try {
+      const { status: cameraStatus } = await requestCameraPermission();
+
+      if (cameraStatus !== "granted") {
+        Alert.alert(
+          "Lo siento",
+          "Es necesario conceder permisos para usar la cámara",
+        );
+        return;
+      }
+
+      const { status: mediaStatus } = await requestMediaPermission();
+
+      if (mediaStatus !== "granted") {
+        Alert.alert(
+          "Lo siento",
+          "Es necesario conceder permisos para usar la galería",
+        );
+        return;
+      }
+    } catch (error) {
+      console.log("🚀 index.tsx -> #31 ~", error);
+      Alert.alert("Error", "Algo salio mal con los permisos");
+    }
+  };
+
+  if (!cameraPermission) {
     // Camera permissions are still loading.
     return <View />;
   }
 
-  if (!permission.granted) {
+  if (!cameraPermission.granted) {
     // Camera permissions are not granted yet.
     return (
       <View
@@ -43,7 +73,7 @@ export default function Camera() {
           Necesitamos permiso para usar la cámara y la galería
         </Text>
 
-        <TouchableOpacity onPress={requestPermission}>
+        <TouchableOpacity onPress={onRequestPermissions}>
           <ThemedText type="subtitle">Solicitar permiso</ThemedText>
         </TouchableOpacity>
       </View>
@@ -56,8 +86,6 @@ export default function Camera() {
     const picture = await cameraRef.current.takePictureAsync({
       quality: 0.7,
     });
-
-    console.log("🚀 index.tsx -> #55 ~", picture);
 
     if (!picture?.uri) return;
 
@@ -72,8 +100,14 @@ export default function Camera() {
     router.dismiss();
   };
 
-  const onConfirmImage = () => {
-    // TODO: guardar imagen en el dispositivo
+  const onConfirmImage = async () => {
+    if (!selectedImage) return;
+
+    await MediaLibrary.createAssetAsync(selectedImage);
+
+    // TODO: Implementar función
+
+    router.dismiss();
   };
 
   const onRetakeImage = () => {
@@ -105,14 +139,9 @@ export default function Camera() {
 
         <FlipCameraButton onPress={toggleCameraFacing} />
 
-        {/* TODO: Galery */}
         <GaleryButton onPress={toggleCameraFacing} />
 
         <ReturnCancelButton onPress={onReturnCancel} />
-
-        {/* <TouchableOpacity style={styles.button} onPress={toggleCameraFacing}> */}
-        {/*   <Text style={styles.text}>Flip Camera</Text> */}
-        {/* </TouchableOpacity> */}
       </CameraView>
     </View>
   );
