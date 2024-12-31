@@ -12,6 +12,7 @@ import {
   View,
 } from "react-native";
 import * as MediaLibrary from "expo-media-library";
+import * as ImagePicker from "expo-image-picker";
 
 import { ThemedText } from "@/presentation/theme/components/ThemedText";
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
@@ -116,6 +117,25 @@ export default function Camera() {
     setSelectedImage(undefined);
   };
 
+  const onPickImages = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      quality: 0.5,
+      aspect: [4, 3],
+      // allowsEditing: true, //  INFO: si es true, no se puede seleccionar mas de una imagen
+      allowsMultipleSelection: true,
+      selectionLimit: 5,
+    });
+
+    if (result.canceled) return;
+
+    result.assets.forEach((asset) => {
+      addSelectedImage(asset.uri);
+    });
+
+    router.dismiss();
+  };
+
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
   }
@@ -141,7 +161,7 @@ export default function Camera() {
 
         <FlipCameraButton onPress={toggleCameraFacing} />
 
-        <GaleryButton onPress={toggleCameraFacing} />
+        <GaleryButton onPress={onPickImages} />
 
         <ReturnCancelButton onPress={onReturnCancel} />
       </CameraView>
