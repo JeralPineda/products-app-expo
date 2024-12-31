@@ -22,12 +22,20 @@ import ThemedButton from "@/presentation/theme/components/ThemedButton";
 import ThemedButtonGroup from "@/presentation/theme/components/ThemedButtonGroup";
 import ThemedTextInput from "@/presentation/theme/components/ThemedTextInput";
 import { ThemedView } from "@/presentation/theme/components/ThemedView";
+import { useCameraStore } from "@/presentation/store/useCameraStore";
 
 export default function Product() {
   const { id } = useLocalSearchParams();
   const navigation = useNavigation();
 
+  const { selectedImages, clearImages } = useCameraStore();
   const { productQuery, productMutation } = useProduct(`${id}`);
+
+  useEffect(() => {
+    return () => {
+      clearImages();
+    };
+  }, []);
 
   useEffect(() => {
     navigation.setOptions({
@@ -69,7 +77,7 @@ export default function Product() {
           behavior={Platform.OS === "ios" ? "padding" : undefined}
         >
           <ScrollView>
-            <ProductImages images={product.images} />
+            <ProductImages images={[...product.images, ...selectedImages]} />
 
             <ThemedView style={{ marginHorizontal: 10, marginTop: 20 }}>
               <ThemedTextInput

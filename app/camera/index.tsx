@@ -15,10 +15,12 @@ import * as MediaLibrary from "expo-media-library";
 
 import { ThemedText } from "@/presentation/theme/components/ThemedText";
 import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
+import { useCameraStore } from "@/presentation/store/useCameraStore";
 
 export default function Camera() {
   const [facing, setFacing] = useState<CameraType>("back");
   const [selectedImage, setSelectedImage] = useState<string>();
+  const { addSelectedImage } = useCameraStore();
 
   const [cameraPermission, requestCameraPermission] = useCameraPermissions();
   const [mediaPermissionResponse, requestMediaPermission] =
@@ -91,7 +93,7 @@ export default function Camera() {
 
     setSelectedImage(picture.uri);
 
-    // TODO: Guardar imagen en el dispositivo
+    // TODO: Guardar imagen
   };
 
   const onReturnCancel = () => {
@@ -105,7 +107,7 @@ export default function Camera() {
 
     await MediaLibrary.createAssetAsync(selectedImage);
 
-    // TODO: Implementar función
+    addSelectedImage(selectedImage);
 
     router.dismiss();
   };
