@@ -1,11 +1,11 @@
-import { ThemedText } from "@/presentation/theme/components/ThemedText";
-import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
 import { Ionicons } from "@expo/vector-icons";
 import { CameraView, CameraType, useCameraPermissions } from "expo-camera";
 import { router } from "expo-router";
 import { useRef, useState } from "react";
+
 import {
   Button,
+  Image,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -13,8 +13,12 @@ import {
   View,
 } from "react-native";
 
+import { ThemedText } from "@/presentation/theme/components/ThemedText";
+import { useThemeColor } from "@/presentation/theme/hooks/useThemeColor";
+
 export default function Camera() {
   const [facing, setFacing] = useState<CameraType>("back");
+  const [selectedImage, setSelectedImage] = useState<string>();
   const [permission, requestPermission] = useCameraPermissions();
 
   const cameraRef = useRef<CameraView>(null);
@@ -57,17 +61,41 @@ export default function Camera() {
 
     if (!picture?.uri) return;
 
+    setSelectedImage(picture.uri);
+
     // TODO: Guardar imagen en el dispositivo
   };
 
-  const onReturnCancel = async () => {
+  const onReturnCancel = () => {
     // TODO: limpiar estado
 
     router.dismiss();
   };
 
+  const onConfirmImage = () => {
+    // TODO: guardar imagen en el dispositivo
+  };
+
+  const onRetakeImage = () => {
+    setSelectedImage(undefined);
+  };
+
   function toggleCameraFacing() {
     setFacing((current) => (current === "back" ? "front" : "back"));
+  }
+
+  if (selectedImage) {
+    return (
+      <View style={styles.container}>
+        <Image source={{ uri: selectedImage }} style={styles.camera} />
+
+        <ReturnCancelButton onPress={onReturnCancel} />
+
+        <ConfirmImageButton onPress={onConfirmImage} />
+
+        <RetakeImageButton onPress={onRetakeImage} />
+      </View>
+    );
   }
 
   return (
@@ -107,14 +135,7 @@ const ShutterButton = ({ onPress }: { onPress: () => void }) => {
           borderColor: primaryColor,
         },
       ]}
-    >
-      <View
-        style={{
-          backgroundColor: primaryColor,
-          position: "absolute",
-        }}
-      />
-    </TouchableOpacity>
+    ></TouchableOpacity>
   );
 };
 
@@ -138,6 +159,37 @@ const ReturnCancelButton = ({ onPress }: { onPress: () => void }) => {
   return (
     <TouchableOpacity onPress={onPress} style={styles.returnCancelButton}>
       <Ionicons name="close-outline" size={30} color="white" />
+    </TouchableOpacity>
+  );
+};
+
+const ConfirmImageButton = ({ onPress }: { onPress: () => void }) => {
+  const dimensions = useWindowDimensions();
+  const primaryColor = useThemeColor({}, "primary");
+
+  return (
+    <TouchableOpacity
+      onPress={onPress}
+      style={[
+        styles.shutterButton,
+        {
+          position: "absolute",
+          bottom: 30,
+          left: dimensions.width / 2 - 32,
+          backgroundColor: primaryColor,
+          borderColor: "transparent",
+        },
+      ]}
+    >
+      <Ionicons name="checkmark-outline" size={30} color="white" />
+    </TouchableOpacity>
+  );
+};
+
+const RetakeImageButton = ({ onPress }: { onPress: () => void }) => {
+  return (
+    <TouchableOpacity onPress={onPress} style={styles.flipCameraButton}>
+      <Ionicons name="camera-outline" size={30} color="white" />
     </TouchableOpacity>
   );
 };
