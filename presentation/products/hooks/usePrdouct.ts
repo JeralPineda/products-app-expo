@@ -5,8 +5,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getProductById } from "@/core/products/actions/get-product-by-id.action";
 import { Product } from "@/core/products/interface/product.interface";
 import { updateCreateProduct } from "@/core/products/actions/create-update-product.action";
+import { useCameraStore } from "@/presentation/store/useCameraStore";
 
 export function useProduct(productId: string) {
+  const { clearImages } = useCameraStore();
+
   const productIdRef = useRef(productId); // "new" or UUID
   const queryClient = useQueryClient();
 
@@ -25,6 +28,8 @@ export function useProduct(productId: string) {
 
     onSuccess: (data: Product) => {
       productIdRef.current = data.id;
+
+      clearImages();
 
       queryClient.invalidateQueries({
         queryKey: ["products", "infinite"],
